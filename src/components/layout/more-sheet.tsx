@@ -26,6 +26,7 @@ import { StarLattice } from "@/components/decor/islamic-pattern";
 
 const navIcons: Record<string, LucideIcon> = {
   Home,
+  Search,
   Quran: BookOpenText,
   Hadith: ScrollText,
   Library: Library,

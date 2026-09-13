@@ -172,6 +172,17 @@
     display: none;
   }
 
+  /* Search-match highlights inside result excerpts (<mark> from the API) */
+  .search-excerpt mark {
+    background: color-mix(in oklch, var(--gold) 30%, transparent);
+    color: var(--foreground);
+    border-radius: 0.25rem;
+    padding: 0 0.125em;
+    font-weight: 500;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
   /* Accessible focus visibility */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;

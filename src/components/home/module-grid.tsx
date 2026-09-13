@@ -82,8 +82,15 @@ export function ModuleGrid() {
                         Explore now
                         <ArrowRight className="h-3 w-3" aria-hidden="true" />
                       </Link>
+                    ) : (
+                      <SoonChip phase={mod.phase} />
+                    )}
+                    {live ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/5 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
+                        Live
+                      </span>
                     ) : null}
-                    <SoonChip phase={mod.phase} />
                   </div>
                 </CardContent>
               </Card>

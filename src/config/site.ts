@@ -45,6 +45,7 @@ export const routes = {
 export const mainNav: NavItem[] = [
   { label: "Home", href: routes.home },
   { label: "Library", href: routes.library },
+  { label: "Search", href: routes.search },
   { label: "Quran", href: routes.quran, soon: true, phase: 6 },
   { label: "Hadith", href: routes.hadith, soon: true, phase: 7 },
   { label: "Ask AI", href: routes.ai, soon: true, phase: 9 },
@@ -57,7 +58,7 @@ export const mainNav: NavItem[] = [
 export const tabNav: TabItem[] = [
   { key: "home", label: "Home", icon: "home", href: routes.home },
   { key: "quran", label: "Quran", icon: "book-open-text", soon: true, phase: 6 },
-  { key: "search", label: "Search", icon: "search", soon: true, phase: 5 },
+  { key: "search", label: "Search", icon: "search", href: routes.search },
   { key: "library", label: "Library", icon: "library", href: routes.library },
   { key: "more", label: "More", icon: "menu", action: "more" },
 ];
@@ -67,9 +68,9 @@ export const tabNav: TabItem[] = [
  * Keep in sync with docs/ARCHITECTURE.md §6.
  */
 export const buildProgress = {
-  currentPhase: 4,
+  currentPhase: 5,
   totalPhases: 16,
-  phaseLabel: "Reader & reading progress",
+  phaseLabel: "Global search",
 } as const;
 
 /**
@@ -115,6 +116,8 @@ export const moduleShowcase = [
     description: "One search across Quran, Hadith and the whole library.",
     icon: "search",
     phase: 5,
+    live: true,
+    href: "/search",
   },
   {
     key: "ai",

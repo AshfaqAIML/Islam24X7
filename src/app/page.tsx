@@ -12,6 +12,7 @@ import { GreetingCard } from "@/components/home/greeting-card";
 import { DailyAyahCard } from "@/components/home/daily-ayah-card";
 import { TasbeehCard } from "@/components/home/tasbeeh-card";
 import { ContinueReadingCard } from "@/components/home/continue-reading-card";
+import { SearchShortcutCard } from "@/components/home/search-shortcut-card";
 import { PhaseProgress } from "@/components/home/phase-progress";
 import { ModuleGrid } from "@/components/home/module-grid";
 import { DesignPreview } from "@/components/home/design-preview";
@@ -80,6 +81,8 @@ export default async function HomePage() {
           </div>
 
           <ContinueReadingCard />
+
+          <SearchShortcutCard />
         </div>
       </section>
 
