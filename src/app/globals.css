@@ -163,6 +163,15 @@
     background: color-mix(in oklch, var(--primary) 40%, transparent);
   }
 
+  /* Fully hidden scrollbar for chip rows / carousels (still scrollable) */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Accessible focus visibility */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;

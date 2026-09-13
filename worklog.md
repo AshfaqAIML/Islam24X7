@@ -48,3 +48,30 @@ Stage Summary:
 - New files: layout/bottom-tab-bar.tsx, layout/more-sheet.tsx, home/{greeting-card,daily-ayah-card,continue-reading-card,tasbeeh-card,phase-progress}.tsx, lib/dhikr-store.ts, lib/demo/content.ts.
 - Known cosmetic: Next dev-tools bubble overlaps Home tab in dev screenshots only (not shipped in prod builds).
 - Next phase: P3 Library (/library browse grid + /library/[bookId] detail) via services layer with mock provider — needs lib/demo/books expansion, services/books.ts provider switch, category/author filters, favorites (local). Risks: none open.
+
+---
+Task ID: 3
+Agent: Z.ai Code (main orchestrator)
+Task: Status assessment + agent-browser QA + Phase 3 (Library & book details) implementation
+
+Work Log:
+- QA sweep: home/+/download/APIs healthy from Phase 2 → proceeded to P3 per phase order.
+- SERVICES LAYER (first piece — the only KB consumer): `services/kb.ts` (dataSource live|demo via KNOWLEDGE_BASE_API_URL, kbFetch w/ 8s timeout) + `services/books.ts` (listBooks w/ q/category/language/sort/page filters, getBook, getBookChapters; live provider proxies real backend, falls back to labeled demo on failure; demo provider filters src/lib/demo in-memory).
+- Demo data expanded: 12 labeled demo books across ALL categories/languages (en/ar/ur/id/tr), each with hue-driven cover, blurb, addedAt; deterministic `demoChaptersFor()` placeholder TOCs ("Chapter N — <structural label> (Demo)"). Language labels map added.
+- API routes: GET /api/books (filter+paginate), GET /api/books/[bookId], GET /api/books/[bookId]/chapters — all backed by services; 404 JSON for unknown ids.
+- Favorites: `lib/favorites-store.ts` (frozen-snapshot external store, localStorage ik.favorites.v1) + `hooks/use-favorites.ts` (useFavorites/useIsFavorite) + FavoriteButton (sm overlay on cards, lg labelled on detail; toast feedback, aria-pressed).
+- BookCard upgraded: links to /library/[id] (cover + title), heart overlay, hover lift/border glow; removed old toast stub + onOpen prop.
+- /library page: gradient header w/ StarLattice; LibraryBrowser client (URL-param-synced deep-linkable filters, debounced search 350ms, 12 category chips + Favorites toggle in scrollable row, language + sort selects, results count w/ Demo data chip, skeleton grid, EmptyState (no-match vs no-favorites variants), ErrorState w/ retry, Load more (pageSize 9), clear-all, provenance note). Suspense shell w/ fallback.
+- /library/[bookId]: breadcrumb, big cover, meta dl (pages/language/chapters/added), disabled "Open reader" (honest Phase-4 lock + deep-link anchor note /library/[id]/read), About card, TOC list w/ chapter numbers + page counts, demo disclaimer. generateMetadata per book.
+- app/not-found.tsx: branded 404 (compass, home/library CTAs).
+- Nav flip: mainNav + tabNav Library now LIVE; moduleShowcase library `live: true` (ModuleGrid renders gold "Explore now" link + highlighted card); buildProgress → Phase 3; hero chip auto-updates; home ContinueReading CTA → "Browse the library"; sitemap adds /library (daily 0.9); globals: scrollbar-none utility.
+- FIXED from tsc: InstallAppBanner onDownload now optional w/ internal /api/downloads/track + apkPromptStore.markDownloaded fallback; design-preview BookCard onOpen removed.
+- FIXED dev-server death: server crashed mid-hot-reload (stale `Link is not defined` from an intermediate edit state) and stayed down — restarted via nohup bun run dev (background), healthy since.
+- FIXED race: rapid filter clicks composed from stale useSearchParams (favorites filter resurrected) → paramsRef synchronous mirror now used by pushParams/clearAll.
+- E2E verified: library loads 12 books; favorite → Favorites filter shows 1; favorites+fiqh compose (0) then unfavorite-filter → fiqh (1) [race fixed]; search "tafsir" → 3; clear-all resets; Load more 9→12; detail page full structure; lg favorite toggle add/remove persists; /library/nope → branded 404; APIs (fiqh filter, chapters 200, unknown book 404); home "Explore now" on Library card; mobile 390 + dark screenshots clean; lint 0; tsc src/ 0.
+
+Stage Summary:
+- Phase 3 COMPLETE: Library browse + book detail live, services layer established as the single KB seam (demo↔live switch), favorites foundation shipped.
+- Key decisions: API routes are thin wrappers over services; favorites stay local until P8 auth; reader deep-link anchor documented on detail page; demo provenance notes rendered on every library surface.
+- Ops note: dev server now runs via `nohup bun run dev >> dev.log` started manually (system auto-run had died); restart same way if connection refused.
+- Next phase: P4 Reader (/library/[bookId]/read) — paginated content surface, TOC drawer, font/width settings (persisted via external store like dhikr-store), bookmarks/highlights stubs with honest demo content, progress % on continue-reading card. Risks: none open.

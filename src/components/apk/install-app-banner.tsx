@@ -24,9 +24,23 @@ export function InstallAppBanner({
   onDownload,
 }: {
   status: ApkReleaseStatus | null;
-  onDownload: (url: string) => void;
+  /** Optional override; by default the download is tracked (no PII). */
+  onDownload?: (url: string) => void;
 }) {
   const [locallyDismissed, setLocallyDismissed] = useState(false);
+
+  const handleDownload = (url: string) => {
+    if (onDownload) {
+      onDownload(url);
+      return;
+    }
+    void fetch("/api/downloads/track", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ platform: "android", source: "banner" }),
+    }).catch(() => {});
+    apkPromptStore.markDownloaded();
+  };
 
   // Hydration-safe browser reads (SSR renders hidden; client updates after).
   const platform = useBrowserValue(detectPlatform, "desktop" as const);
@@ -84,7 +98,7 @@ export function InstallAppBanner({
           </p>
         </div>
         {available && release ? (
-          <Button asChild size="sm" onClick={() => onDownload(release.downloadUrl)}>
+          <Button asChild size="sm" onClick={() => handleDownload(release.downloadUrl)}>
             <a href={release.downloadUrl} download>
               <Download className="h-4 w-4" aria-hidden="true" />
               Get APK

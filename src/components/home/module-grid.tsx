@@ -1,4 +1,6 @@
+import Link from "next/link";
 import {
+  ArrowRight,
   BookMarked,
   BookOpenText,
   Compass,
@@ -9,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { moduleShowcase } from "@/config/site";
+import { moduleShowcase, routes } from "@/config/site";
 import { Card, CardContent } from "@/components/ui/card";
 import { SoonChip } from "@/components/common/states";
 
@@ -44,9 +46,16 @@ export function ModuleGrid() {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {moduleShowcase.map((mod) => {
           const Icon = iconMap[mod.icon] ?? BookOpenText;
+          const live = "live" in mod && mod.live === true;
           return (
             <li key={mod.key}>
-              <Card className="h-full transition-colors hover:border-primary/40">
+              <Card
+                className={
+                  live
+                    ? "h-full border-primary/35 bg-gradient-to-b from-primary/[0.06] to-transparent transition-colors hover:border-primary/50"
+                    : "h-full transition-colors hover:border-primary/40"
+                }
+              >
                 <CardContent className="flex h-full flex-col gap-3 p-5">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
                     <Icon
@@ -60,7 +69,16 @@ export function ModuleGrid() {
                       {mod.description}
                     </p>
                   </div>
-                  <div className="mt-auto pt-2">
+                  <div className="mt-auto flex items-center gap-2 pt-2">
+                    {live ? (
+                      <Link
+                        href={routes.library}
+                        className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground transition-transform hover:-translate-y-px"
+                      >
+                        Explore now
+                        <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                      </Link>
+                    ) : null}
                     <SoonChip phase={mod.phase} />
                   </div>
                 </CardContent>

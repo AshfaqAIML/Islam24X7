@@ -1,62 +1,50 @@
 "use client";
 
+import Link from "next/link";
 import { BookOpen } from "lucide-react";
 import type { Book } from "@/types/knowledge-base";
-import type { DemoBook } from "@/lib/demo/books";
 import { demoCategoryLabels } from "@/lib/demo/books";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { DemoBadge } from "@/components/common/states";
 import { StarLattice } from "@/components/decor/islamic-pattern";
-import { useToast } from "@/hooks/use-toast";
+import { FavoriteButton } from "@/components/library/favorite-button";
 
 /**
- * Reusable book card. In Phase 1 it is used with clearly-labeled demo data;
- * from Phase 3 it renders real Knowledge Base books and links to the reader.
+ * Reusable book card — links to the book detail page. Renders labeled demo
+ * records until the Knowledge Base connects; the API contract is identical.
  */
 export function BookCard({
   book,
-  onOpen,
+  href,
   className,
 }: {
   book: Book & { coverHue?: number };
-  onOpen?: (book: Book) => void;
+  /** Override destination (defaults to the book detail page). */
+  href?: string;
   className?: string;
 }) {
-  const { toast } = useToast();
   const hue = book.coverHue ?? 165;
-
-  const handleOpen = () => {
-    if (onOpen) {
-      onOpen(book);
-      return;
-    }
-    toast({
-      title: "Library under construction",
-      description:
-        "Browsing and reading real books arrives with the Knowledge Base integration (Phase 3).",
-    });
-  };
+  const dest = href ?? `/library/${book.id}`;
 
   return (
     <Card
       className={cn(
-        "group overflow-hidden transition-all hover:-translate-y-0.5 hover:shadow-md",
+        "group relative overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md",
         className
       )}
     >
       <CardContent className="flex gap-4 p-4">
         {/* Cover (generated placeholder — real covers come from the KB) */}
-        <button
-          type="button"
-          onClick={handleOpen}
-          className="focus-ring relative aspect-[3/4] w-20 shrink-0 overflow-hidden rounded-md text-left sm:w-24"
+        <Link
+          href={dest}
+          className="focus-ring relative aspect-[3/4] w-20 shrink-0 overflow-hidden rounded-md sm:w-24"
           aria-label={`Open ${book.title}`}
+          tabIndex={-1}
+          aria-hidden="true"
         >
           <span
-            aria-hidden="true"
-            className="absolute inset-0"
+            className="absolute inset-0 transition-transform duration-300 group-hover:scale-[1.04]"
             style={{
               background: `linear-gradient(145deg, oklch(0.34 0.07 ${hue}), oklch(0.48 0.09 ${hue}))`,
             }}
@@ -71,12 +59,17 @@ export function BookCard({
               {demoCategoryLabels[book.category] ?? book.category}
             </span>
           </span>
-        </button>
+        </Link>
 
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="mb-1 flex items-start justify-between gap-2">
             <h3 className="line-clamp-2 font-serif text-sm font-semibold leading-snug sm:text-base">
-              {book.title}
+              <Link
+                href={dest}
+                className="focus-ring rounded-sm transition-colors hover:text-primary"
+              >
+                {book.title}
+              </Link>
             </h3>
             {book.isDemo ? <DemoBadge className="mt-0.5 shrink-0" /> : null}
           </div>
@@ -91,12 +84,9 @@ export function BookCard({
             <span className="uppercase">{book.language}</span>
             {book.pageCount ? <span>· {book.pageCount} pages</span> : null}
           </div>
-          <div className="mt-3">
-            <Button size="sm" variant="outline" onClick={handleOpen}>
-              Open
-            </Button>
-          </div>
         </div>
+
+        <FavoriteButton bookId={book.id} bookTitle={book.title} />
       </CardContent>
     </Card>
   );

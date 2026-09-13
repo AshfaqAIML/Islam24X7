@@ -59,17 +59,7 @@ export function DesignPreview() {
         {/* Book cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {demoBooks.map((book) => (
-            <BookCard
-              key={book.id}
-              book={book}
-              onOpen={() =>
-                toast({
-                  title: "Demo book",
-                  description:
-                    "Real books open in the reader from Phase 4, straight from the Knowledge Base.",
-                })
-              }
-            />
+            <BookCard key={book.id} book={book} />
           ))}
         </div>
 

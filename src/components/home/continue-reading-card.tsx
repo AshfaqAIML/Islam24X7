@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Bookmark, BookOpen, NotebookPen } from "lucide-react";
+import { ArrowRight, Bookmark, BookOpen, NotebookPen } from "lucide-react";
 import { routes } from "@/config/site";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { SoonChip } from "@/components/common/states";
 
 /**
@@ -33,14 +34,14 @@ export function ContinueReadingCard() {
             <NotebookPen className="h-3.5 w-3.5" aria-hidden="true" />
             Notes
           </span>
-          <SoonChip phase={3} />
+          <SoonChip phase={8} />
         </div>
-        <Link
-          href="#modules"
-          className="focus-ring text-xs font-medium text-primary underline-offset-4 hover:underline"
-        >
-          See the build roadmap
-        </Link>
+        <Button asChild variant="outline" size="sm" className="mt-1">
+          <Link href={routes.library}>
+            Browse the library
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   );
