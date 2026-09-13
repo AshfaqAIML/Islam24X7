@@ -3,12 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   CalendarDays,
   FileText,
   Languages,
   Layers,
-  Lock,
 } from "lucide-react";
 import { getBook, getBookChapters } from "@/services/books";
 import { demoCategoryLabels, demoLanguageLabels } from "@/lib/demo/books";
@@ -16,7 +16,7 @@ import { routes } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { DemoBadge, SoonChip } from "@/components/common/states";
+import { DemoBadge } from "@/components/common/states";
 import { StarLattice } from "@/components/decor/islamic-pattern";
 import { FavoriteButton } from "@/components/library/favorite-button";
 
@@ -129,14 +129,11 @@ export default async function BookDetailPage({ params }: PageProps) {
 
             {/* Actions */}
             <div className="mt-5 flex flex-wrap items-center gap-2.5">
-              <Button
-                size="lg"
-                disabled
-                aria-describedby="reader-phase-note"
-                className="gap-2"
-              >
-                <Lock className="h-4 w-4" aria-hidden="true" />
-                Open reader
+              <Button asChild size="lg" className="gap-2">
+                <Link href={`/library/${book.id}/read`}>
+                  <BookOpen className="h-4 w-4" aria-hidden="true" />
+                  Open reader
+                </Link>
               </Button>
               <FavoriteButton bookId={book.id} bookTitle={book.title} size="lg" />
             </div>
@@ -144,9 +141,8 @@ export default async function BookDetailPage({ params }: PageProps) {
               id="reader-phase-note"
               className="mt-2 text-xs text-muted-foreground"
             >
-              The premium reader — table of contents, highlights, notes and
-              reading progress — ships in Phase 4. This page is its
-              deep-link anchor: <code className="rounded bg-muted px-1">/library/{book.id}/read</code>
+              The reader remembers your place, offers type &amp; paper settings,
+              and accepts deep links — <code className="rounded bg-muted px-1">/library/{book.id}/read</code> opens this volume; bookmarks, highlights and notes sync from Phase 8.
             </p>
           </div>
         </div>
@@ -167,34 +163,39 @@ export default async function BookDetailPage({ params }: PageProps) {
             <h2 id="chapters-heading" className="font-serif text-lg font-semibold">
               Table of contents
             </h2>
-            <SoonChip phase={4} />
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+              Reader live
+            </span>
           </div>
           <Card>
             <CardContent className="p-0">
               <ol className="divide-y">
                 {chapters.map((ch) => (
-                  <li
-                    key={ch.id}
-                    className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary font-serif text-sm font-semibold text-secondary-foreground">
-                        {ch.number ?? "•"}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-medium">
-                          {ch.title}
+                  <li key={ch.id}>
+                    <Link
+                      href={`/library/${book.id}/read?chapter=${ch.id}`}
+                      className="focus-ring flex items-center justify-between gap-3 px-4 py-3 transition-colors hover:bg-muted/60 sm:px-5"
+                    >
+                      <span className="flex min-w-0 items-center gap-3">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-secondary font-serif text-sm font-semibold text-secondary-foreground">
+                          {ch.number ?? "•"}
                         </span>
-                        {ch.pageCount ? (
-                          <span className="block text-xs text-muted-foreground">
-                            {ch.pageCount} pages
+                        <span className="min-w-0">
+                          <span className="block truncate text-sm font-medium">
+                            {ch.title}
                           </span>
-                        ) : null}
+                          {ch.pageCount ? (
+                            <span className="block text-xs text-muted-foreground">
+                              {ch.pageCount} pages
+                            </span>
+                          ) : null}
+                        </span>
                       </span>
-                    </div>
-                    <span className="shrink-0 text-xs text-muted-foreground/70">
-                      opens in reader
-                    </span>
+                      <span className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary">
+                        Read
+                        <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                      </span>
+                    </Link>
                   </li>
                 ))}
                 {chapters.length === 0 ? (

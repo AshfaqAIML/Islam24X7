@@ -75,3 +75,30 @@ Stage Summary:
 - Key decisions: API routes are thin wrappers over services; favorites stay local until P8 auth; reader deep-link anchor documented on detail page; demo provenance notes rendered on every library surface.
 - Ops note: dev server now runs via `nohup bun run dev >> dev.log` started manually (system auto-run had died); restart same way if connection refused.
 - Next phase: P4 Reader (/library/[bookId]/read) — paginated content surface, TOC drawer, font/width settings (persisted via external store like dhikr-store), bookmarks/highlights stubs with honest demo content, progress % on continue-reading card. Risks: none open.
+
+---
+Task ID: 4
+Agent: Z.ai Code (main orchestrator)
+Task: Status assessment + agent-browser QA + Phase 4 (Reader & reading progress) implementation
+
+Work Log:
+- QA sweep: /library, /library/[id], home all healthy → proceeded to P4 per phase order.
+- Data: `lib/demo/pages.ts` (deterministic placeholder pages per chapter — rotated generic paragraphs, ZERO religious content, labeled demo); services `getBookPages(bookId, chapterId?)` (live/demo switch, BookPagesResult); API GET /api/books/[bookId]/pages?chapterId=.
+- Stores (persisted, useSyncExternalStore): `lib/reader-settings-store.ts` (fontSize sm–xl, spacing 3, width 3, paper standard/sepia/ink + Tailwind class maps + reset) and `lib/reading-progress-store.ts` (per-book {chapterId, chapterTitle, bookTitle, page, pageCount, percent}, newest-first snapshot, out-of-order save guard, MAX_BOOKS trim, clear()).
+- Hooks: use-reader-settings (useReaderTypography → font/spacing/width/paper classes), use-reading-progress (useAllReadingProgress / useReadingProgress).
+- Reader UI `components/reader/reader-view.tsx` + route `/library/[bookId]/read` (server shell w/ generateMetadata, robots noindex): sticky toolbar (back, title+chapter, DemoBadge, Contents, settings), gold gradient progress hairline, resume banner ("You stopped at X — N%"), chapter header, paginated sections w/ PAGE N markers + emerald serif drop cap on page-1 first paragraph, provenance note, prev/next chapter pager, TOC left Sheet (active chapter, page counts, clear-progress action), settings Popover (4 segmented groups + reset). Deep-linkable: ?chapter= synced on switch; fresh open resumes SAVED chapter (URL > saved > first) and restores scroll %.
+- Detail page rewired: "Open reader" now ENABLED (primary CTA), TOC rows are links to read?chapter=, "Reader live" chip replaced SoonChip.
+- Home ContinueReadingCard upgraded to LIVE: shows latest real progress (title, chapter, relative time, progress bar %, Resume button) — honest empty state until first session. Uses bookTitle from progress record (no fetch).
+- Config: buildProgress → 4 "Reader & reading progress"; moduleShowcase reader live w/ own href; ModuleGrid links via per-module href.
+- BUGS found & fixed via agent-browser E2E:
+  1) Turbopack stale module: new getBookPages not seen by route → dev server restart fixed.
+  2) getServerSnapshot allocated new objects each call → React "cached to avoid an infinite loop" warning + broken scroll listeners → cached frozen constants in reading-progress / reader-settings / favorites stores. THIS was the root cause of flaky saves.
+  3) Resume banner self-cancelled (loadChapter cleared it unconditionally) → banner persists unless user starts over or switches chapter.
+  4) Scroll restore fired before article render + wrong math (article-internal range instead of document range) → pendingScroll ref applied in post-render effect w/ document scrollable fraction; verified restored scrollY 2631 ≈ 50% target.
+- E2E verified: settings (XL font class applied + persisted JSON), scroll saves {chapter, page 3, percent 40.4}, TOC switch updates ?chapter=, Next pager ch3→ch4, fresh open resumes saved chapter + banner + exact scroll restore, home card shows live record w/ Resume link, sepia/mobile-390/dark screenshots clean, lint 0, tsc src/ 0, home+read 200.
+
+Stage Summary:
+- Phase 4 COMPLETE: premium reader live — chapters, TOC, typography/paper settings (persisted), per-book progress with resume + deep links; home continue-reading is now driven by real reading sessions.
+- Key decisions: progress = window-scroll fraction of rendered chapter (save+restore symmetric); resume preferred over hard first-chapter open; settings device-local until P8; demo pages labeled at toolbar + article + provenance note (no religious content).
+- Files: lib/demo/pages.ts, lib/reader-settings-store.ts, lib/reading-progress-store.ts, hooks/use-reader-settings.ts, hooks/use-reading-progress.ts, components/reader/reader-view.tsx, app/library/[bookId]/read/page.tsx, app/api/books/[bookId]/pages/route.ts.
+- Next phase: P5 Global Search (/search) — SearchResponse contract exists; implement services/search (demo provider over demo books/chapters/pages + labeled placeholder), /search page w/ scope tabs (All/Books for now; Quran/Hadith marked Phase 6/7), query highlighting (<mark>), empty/loading/error states, recent searches (local). Risks: none open.

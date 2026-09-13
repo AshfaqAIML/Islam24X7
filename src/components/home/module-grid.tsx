@@ -47,6 +47,10 @@ export function ModuleGrid() {
         {moduleShowcase.map((mod) => {
           const Icon = iconMap[mod.icon] ?? BookOpenText;
           const live = "live" in mod && mod.live === true;
+          const dest =
+            "href" in mod && typeof mod.href === "string"
+              ? mod.href
+              : routes.library;
           return (
             <li key={mod.key}>
               <Card
@@ -72,7 +76,7 @@ export function ModuleGrid() {
                   <div className="mt-auto flex items-center gap-2 pt-2">
                     {live ? (
                       <Link
-                        href={routes.library}
+                        href={dest}
                         className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1 text-[11px] font-semibold text-primary-foreground transition-transform hover:-translate-y-px"
                       >
                         Explore now

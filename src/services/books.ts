@@ -13,9 +13,11 @@ import type {
   BookChapter,
   BookCategory,
   BookLanguage,
+  BookPage,
   Paginated,
 } from "@/types/knowledge-base";
 import { demoBooks, demoChaptersFor } from "@/lib/demo/books";
+import { demoPagesFor } from "@/lib/demo/pages";
 import { kbDataSource, kbFetch } from "@/services/kb";
 
 export type BookSort = "recent" | "title" | "pages";
@@ -111,6 +113,17 @@ function getBookChaptersLive(bookId: string): Promise<BookChapter[]> {
   ).catch(() => []);
 }
 
+function getBookPagesLive(
+  bookId: string,
+  chapterId?: string
+): Promise<BookPage[]> {
+  const sp = new URLSearchParams();
+  if (chapterId) sp.set("chapterId", chapterId);
+  return kbFetch<BookPage[]>(
+    `/books/${encodeURIComponent(bookId)}/pages?${sp.toString()}`
+  ).catch(() => []);
+}
+
 /* -------------------------------- public --------------------------------- */
 
 export async function listBooks(params: ListBooksParams = {}): Promise<BooksPage> {
@@ -140,4 +153,35 @@ export async function getBookChapters(bookId: string): Promise<BookChapter[]> {
     if (live.length > 0) return live;
   }
   return demoChaptersFor(bookId);
+}
+
+export interface BookPagesResult {
+  pages: BookPage[];
+  chapterId: string | null;
+  chapterTitle: string | null;
+  source: "live" | "demo";
+}
+
+export async function getBookPages(
+  bookId: string,
+  chapterId?: string
+): Promise<BookPagesResult> {
+  if (kbDataSource() === "live") {
+    const live = await getBookPagesLive(bookId, chapterId);
+    if (live.length > 0) {
+      return {
+        pages: live,
+        chapterId: chapterId ?? live[0]?.chapterId ?? null,
+        chapterTitle: null,
+        source: "live",
+      };
+    }
+  }
+  const pages = demoPagesFor(bookId, chapterId);
+  return {
+    pages,
+    chapterId: pages[0]?.chapterId ?? null,
+    chapterTitle: null,
+    source: "demo",
+  };
 }

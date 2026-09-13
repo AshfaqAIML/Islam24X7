@@ -7,6 +7,8 @@
  */
 
 const STORAGE_KEY = "ik.favorites.v1";
+/** Stable identity — getServerSnapshot must never allocate (React caches it). */
+const EMPTY_FAVORITES: readonly string[] = Object.freeze([]);
 
 let hydrated = false;
 let favorites: string[] = [];
@@ -57,7 +59,7 @@ export const favoritesStore = {
     return snapshot;
   },
   getServerSnapshot(): readonly string[] {
-    return Object.freeze([]);
+    return EMPTY_FAVORITES;
   },
   has(id: string): boolean {
     init();

@@ -67,9 +67,9 @@ export const tabNav: TabItem[] = [
  * Keep in sync with docs/ARCHITECTURE.md §6.
  */
 export const buildProgress = {
-  currentPhase: 3,
+  currentPhase: 4,
   totalPhases: 16,
-  phaseLabel: "Library & book details",
+  phaseLabel: "Reader & reading progress",
 } as const;
 
 /**
@@ -98,6 +98,7 @@ export const moduleShowcase = [
     icon: "library",
     phase: 3,
     live: true,
+    href: "/library",
   },
   {
     key: "reader",
@@ -105,6 +106,8 @@ export const moduleShowcase = [
     description: "A premium e-book reader with highlights, notes and progress.",
     icon: "book-marked",
     phase: 4,
+    live: true,
+    href: "/library/demo-seerah-1/read",
   },
   {
     key: "search",
