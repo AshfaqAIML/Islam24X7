@@ -18,7 +18,7 @@ import type { LucideIcon } from "lucide-react";
 import { mainNav, buildProgress, routes } from "@/config/site";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { Logo } from "@/components/brand/logo";
@@ -61,10 +61,10 @@ export function MoreSheet({ open, onOpenChange }: MoreSheetProps) {
             <Logo size={26} />
             <SheetTitle className="font-serif text-lg">Explore</SheetTitle>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <SheetDescription className="text-xs text-muted-foreground">
             Phase {buildProgress.currentPhase} of {buildProgress.totalPhases} —{" "}
             {buildProgress.phaseLabel}
-          </p>
+          </SheetDescription>
         </SheetHeader>
         <Separator />
 
@@ -161,7 +161,7 @@ export function MoreSheet({ open, onOpenChange }: MoreSheetProps) {
               aria-hidden="true"
             />
             <p className="relative font-serif text-sm text-muted-foreground">
-              {brand.name} — read, search, learn &amp; study.
+              {brand.name} — {brand.tagline}
             </p>
             <p className="relative mt-1 text-[11px] text-muted-foreground/70">
               Every answer will cite its sources. Modules activate as the

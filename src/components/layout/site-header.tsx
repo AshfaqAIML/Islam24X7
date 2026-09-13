@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Download, Menu } from "lucide-react";
+import { Download, Menu, Search } from "lucide-react";
 import { brand } from "@/config/brand";
 import { mainNav, routes } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -84,6 +84,18 @@ export function SiteHeader() {
         </TooltipProvider>
 
         <div className="flex items-center gap-1.5">
+          {/* Global search — one tap from the header on every screen size (§8) */}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="text-foreground/80 hover:bg-muted hover:text-foreground"
+            aria-label="Search Quran, Hadith and books"
+          >
+            <Link href={routes.search}>
+              <Search className="h-5 w-5" aria-hidden="true" />
+            </Link>
+          </Button>
           <Button
             asChild
             variant="outline"

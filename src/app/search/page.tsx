@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { SearchView } from "@/components/search/search-view";
 import { StarLattice } from "@/components/decor/islamic-pattern";
+import { routes } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Search",
   description:
     "One search across the whole Islamic library — books, chapters and pages. Quran and Hadith scopes arrive with their phases.",
+  alternates: { canonical: routes.search },
 };
 
 export default function SearchPage() {

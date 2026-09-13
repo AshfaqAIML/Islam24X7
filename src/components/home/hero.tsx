@@ -85,7 +85,7 @@ export function Hero() {
           {...fadeUp(0.32)}
           className="mt-6 text-xs text-muted-foreground"
         >
-          Built API-first on a dedicated Islamic Knowledge Base · every AI
+          Built API-first on a dedicated Knowledge Base · every AI
           answer will cite its sources
         </motion.p>
       </div>

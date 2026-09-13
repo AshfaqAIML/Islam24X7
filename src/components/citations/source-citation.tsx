@@ -1,15 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { BookMarked, BookOpen, ScrollText } from "lucide-react";
 import type { Citation } from "@/types/knowledge-base";
 import { cn } from "@/lib/utils";
+import { citationHref, citationUnavailableReason } from "@/lib/open-citation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
 /**
  * Reusable source citation component (Quran / Hadith / Book).
- * The "Open source" action must navigate to the exact passage
- * (book → chapter → page) once the reader exists (Phase 4 / #52).
+ * "Open source" resolves the citation to its exact passage via
+ * open-citation.ts (book → chapter → page works today; Quran/Hadith stay
+ * honestly locked until their phases land).
  */
 export function SourceCitation({
   citation,
@@ -47,15 +50,12 @@ export function SourceCitation({
     if (source.grading) detailLines.push(`Grading: ${source.grading}`);
   }
 
+  const href = citationHref(citation);
+
   const handleOpen = () => {
-    if (onOpen) {
-      onOpen(citation);
-      return;
-    }
     toast({
-      title: "Deep-linking arrives with the Reader (Phase 4)",
-      description:
-        "Citations will open the exact book/chapter/page in the reader once the Knowledge Base is connected.",
+      title: "Source linking not available yet",
+      description: citationUnavailableReason(citation),
     });
   };
 
@@ -88,9 +88,17 @@ export function SourceCitation({
         </p>
       ) : null}
       <div className="mt-3 pl-9">
-        <Button size="sm" variant="outline" onClick={handleOpen}>
-          Open source
-        </Button>
+        {href ? (
+          <Button asChild size="sm" variant="outline">
+            <Link href={href} onClick={onOpen ? () => onOpen(citation) : undefined}>
+              Open source
+            </Link>
+          </Button>
+        ) : (
+          <Button size="sm" variant="outline" onClick={handleOpen}>
+            Open source
+          </Button>
+        )}
       </div>
     </div>
   );

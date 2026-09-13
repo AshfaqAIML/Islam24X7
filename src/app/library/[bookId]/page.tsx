@@ -9,9 +9,11 @@ import {
   FileText,
   Languages,
   Layers,
+  Sparkles,
 } from "lucide-react";
 import { getBook, getBookChapters } from "@/services/books";
 import { demoCategoryLabels, demoLanguageLabels } from "@/lib/demo/books";
+import { brand } from "@/config/brand";
 import { routes } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,7 +34,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: book.title,
     description:
       book.description?.slice(0, 160) ??
-      "Book details in the Islamic Knowledge library.",
+      `Book details in the ${brand.name} library.`,
+    alternates: { canonical: `/library/${bookId}` },
   };
 }
 
@@ -136,6 +139,19 @@ export default async function BookDetailPage({ params }: PageProps) {
                 </Link>
               </Button>
               <FavoriteButton bookId={book.id} bookTitle={book.title} size="lg" />
+            </div>
+            <div className="mt-2.5">
+              <Button
+                asChild
+                size="sm"
+                variant="outline"
+                className="gap-2 border-gold/50 text-gold-foreground hover:bg-gold/10 dark:text-gold"
+              >
+                <Link href={`/ai?scope=book&book=${encodeURIComponent(book.id)}`}>
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  Ask AI About This Book
+                </Link>
+              </Button>
             </div>
             <p
               id="reader-phase-note"

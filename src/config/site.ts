@@ -17,7 +17,7 @@ export type TabItem = {
   key: string;
   label: string;
   /** Lucide icon name shared with home module grid maps. */
-  icon: "home" | "book-open-text" | "search" | "library" | "menu";
+  icon: "home" | "book-open-text" | "search" | "library" | "sparkles" | "menu";
   href?: string;
   /** Opens the More sheet instead of navigating. */
   action?: "more";
@@ -46,20 +46,22 @@ export const mainNav: NavItem[] = [
   { label: "Home", href: routes.home },
   { label: "Library", href: routes.library },
   { label: "Search", href: routes.search },
+  { label: "Ask AI", href: routes.ai },
   { label: "Quran", href: routes.quran, soon: true, phase: 6 },
   { label: "Hadith", href: routes.hadith, soon: true, phase: 7 },
-  { label: "Ask AI", href: routes.ai, soon: true, phase: 9 },
 ];
 
 /**
  * Mobile bottom tab bar (Phase 2). Exactly five slots, thumb-reachable;
  * modules that have not shipped yet stay visible but clearly "Soon".
+ * Layout per the product shell spec: Home · Quran · Library · Ask AI · More
+ * (Search lives in the header, always one tap away).
  */
 export const tabNav: TabItem[] = [
   { key: "home", label: "Home", icon: "home", href: routes.home },
   { key: "quran", label: "Quran", icon: "book-open-text", soon: true, phase: 6 },
-  { key: "search", label: "Search", icon: "search", href: routes.search },
   { key: "library", label: "Library", icon: "library", href: routes.library },
+  { key: "ai", label: "Ask AI", icon: "sparkles", href: routes.ai },
   { key: "more", label: "More", icon: "menu", action: "more" },
 ];
 
@@ -122,9 +124,12 @@ export const moduleShowcase = [
   {
     key: "ai",
     title: "AI Assistant",
-    description: "Ask the library questions — every answer cites its sources.",
+    description:
+      "Ask-the-library foundation is live — every answer will cite its sources.",
     icon: "sparkles",
     phase: 9,
+    live: true,
+    href: "/ai",
   },
   {
     key: "duas",

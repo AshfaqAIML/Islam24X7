@@ -1,4 +1,4 @@
-# Setup — Islamic Knowledge Platform
+# Setup — Islam24x7
 
 ## Prerequisites
 

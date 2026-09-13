@@ -38,6 +38,7 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
@@ -415,7 +416,7 @@ export function ReaderView({ book, chapters }: ReaderViewProps) {
         >
           <SheetHeader className="border-b px-5 py-4 text-left">
             <SheetTitle className="font-serif text-base">Table of contents</SheetTitle>
-            <p className="truncate text-xs text-muted-foreground">{book.title}</p>
+            <SheetDescription className="truncate text-xs text-muted-foreground">{book.title}</SheetDescription>
           </SheetHeader>
           <nav aria-label="Chapters" className="scrollbar-elegant flex-1 overflow-y-auto p-2">
             <ol className="space-y-0.5">

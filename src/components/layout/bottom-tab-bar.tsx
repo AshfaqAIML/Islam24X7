@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpenText, Home, Library, Menu, Search } from "lucide-react";
+import { BookOpenText, Home, Library, Menu, Search, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { tabNav } from "@/config/site";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ const tabIcons: Record<string, LucideIcon> = {
   "book-open-text": BookOpenText,
   search: Search,
   library: Library,
+  sparkles: Sparkles,
   menu: Menu,
 };
 

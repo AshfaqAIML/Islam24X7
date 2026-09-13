@@ -1,11 +1,11 @@
-# Islamic Knowledge Platform
+# Islam24x7
 
-> Read • Search • Learn • Study — a modern Islamic knowledge platform:
+> "Read. Search. Learn. Explore." — a modern Islamic knowledge platform:
 > Quran, Hadith, a structured Islamic library, and an AI research assistant
 > grounded in verifiable sources. Ships as a responsive web app **and** an
 > Android APK from one codebase.
 
-**Status:** Phase 1 of 16 — Foundation & Design System (see
+**Status:** Foundation + Home/Nav + Library + Reader + Search shipped (see
 `docs/ARCHITECTURE.md` for the full plan and screen map).
 
 ## Highlights (already working)

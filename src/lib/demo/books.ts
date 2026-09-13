@@ -188,7 +188,7 @@ const demoBook = (spec: DemoBookSpec): DemoBook => ({
   coverHue: spec.coverHue,
   addedAt: spec.addedAt,
   isDemo: true,
-  description: `${spec.blurb} All of this is placeholder data — real books, authors and covers arrive from the Islamic Knowledge Base.`,
+  description: `${spec.blurb} All of this is placeholder data — real books, authors and covers arrive from the Islam24x7 Knowledge Base.`,
 });
 
 export const demoBooks: DemoBook[] = specs.map(demoBook);

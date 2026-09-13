@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic";
 const pipeline = [
   {
     icon: Database,
-    title: "Islamic Knowledge Base",
+    title: "Knowledge Base",
     text: "Books, Quran, Hadith and citations prepared by a dedicated ingestion pipeline.",
   },
   {

@@ -39,7 +39,7 @@ export function SiteFooter() {
         </div>
         <div className="mt-6 flex flex-col gap-1 border-t pt-4 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {year} {brand.name} (working title). All rights reserved.
+            © {year} {brand.name}. All rights reserved.
           </p>
           <p>
             {featureFlags.useMockData

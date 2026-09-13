@@ -1,6 +1,6 @@
 /**
  * Knowledge Base domain types — the contract between the frontend and the
- * (external) Islamic Knowledge Base backend.
+ * (external) Islam24x7 Knowledge Base backend.
  *
  * The backend is prepared separately by a Python ingestion pipeline.
  * These types describe what the frontend EXPECTS from the API; adapt the

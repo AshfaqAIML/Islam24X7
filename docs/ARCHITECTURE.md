@@ -1,7 +1,10 @@
-# Architecture — Islamic Knowledge Platform
+# Architecture — Islam24x7
 
-> Status: **Phase 1 (Foundation & Design System) implemented.** This document
-> is the authoritative architecture proposal for the whole product.
+> Status: **Phases 1–5 shipped** (foundation, home/nav shell, library, reader,
+> global search) plus the Phase-1 acceptance alignment round: product renamed
+> to **Islam24x7** (config-driven, `src/config/brand.ts`), AI foundation page
+> live (honest not-connected state), citation deep-linking (`openCitation`).
+> This document is the authoritative architecture proposal for the whole product.
 
 ## 1. Product principle
 
