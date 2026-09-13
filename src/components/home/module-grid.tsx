@@ -1,0 +1,74 @@
+import {
+  BookMarked,
+  BookOpenText,
+  Compass,
+  HandHeart,
+  Library,
+  ScrollText,
+  Search,
+  Sparkles,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { moduleShowcase } from "@/config/site";
+import { Card, CardContent } from "@/components/ui/card";
+import { SoonChip } from "@/components/common/states";
+
+const iconMap: Record<string, LucideIcon> = {
+  "book-open-text": BookOpenText,
+  "scroll-text": ScrollText,
+  library: Library,
+  "book-marked": BookMarked,
+  search: Search,
+  sparkles: Sparkles,
+  "hand-heart": HandHeart,
+  compass: Compass,
+};
+
+/**
+ * Honest module roadmap for the construction phase — each card states the
+ * phase in which it ships. Replaced by real module entry points as they land.
+ */
+export function ModuleGrid() {
+  return (
+    <section id="modules" className="mx-auto max-w-6xl scroll-mt-20 px-4 py-14">
+      <div className="mb-8 text-center">
+        <h2 className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
+          What&apos;s inside
+        </h2>
+        <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
+          Built phase by phase, on top of a dedicated Knowledge Base. Nothing
+          here is simulated — modules activate as real data connects.
+        </p>
+      </div>
+
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {moduleShowcase.map((mod) => {
+          const Icon = iconMap[mod.icon] ?? BookOpenText;
+          return (
+            <li key={mod.key}>
+              <Card className="h-full transition-colors hover:border-primary/40">
+                <CardContent className="flex h-full flex-col gap-3 p-5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary">
+                    <Icon
+                      className="h-5 w-5 text-secondary-foreground"
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-serif font-semibold">{mod.title}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                      {mod.description}
+                    </p>
+                  </div>
+                  <div className="mt-auto pt-2">
+                    <SoonChip phase={mod.phase} />
+                  </div>
+                </CardContent>
+              </Card>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
