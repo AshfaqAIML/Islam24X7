@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Download, Menu } from "lucide-react";
@@ -15,13 +16,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
+import { MoreSheet } from "@/components/layout/more-sheet";
 
 /**
  * Responsive site header. Mobile-first: logo + actions always visible,
- * full navigation appears from `sm` up (bottom tab bar lands in Phase 2).
+ * full navigation from `md` up; hamburger opens the More sheet below `md`
+ * (bottom tab bar covers the five primary slots).
  */
 export function SiteHeader() {
   const pathname = usePathname();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -84,7 +88,7 @@ export function SiteHeader() {
             asChild
             variant="outline"
             size="sm"
-            className="hidden border-gold/50 text-gold-foreground hover:bg-gold/10 hover:text-gold-foreground sm:inline-flex"
+            className="hidden border-gold/50 text-gold-foreground hover:bg-gold/10 hover:text-gold-foreground dark:text-gold dark:hover:text-gold sm:inline-flex"
           >
             <Link href={routes.download}>
               <Download className="h-4 w-4" aria-hidden="true" />
@@ -95,7 +99,7 @@ export function SiteHeader() {
             asChild
             variant="outline"
             size="icon"
-            className="border-gold/50 text-gold-foreground hover:bg-gold/10 sm:hidden"
+            className="border-gold/50 text-gold-foreground hover:bg-gold/10 dark:text-gold sm:hidden"
             aria-label="Download the Android app"
           >
             <Link href={routes.download}>
@@ -103,14 +107,22 @@ export function SiteHeader() {
             </Link>
           </Button>
           <ThemeToggle />
-          {/* Mobile menu placeholder — real sheet navigation lands in Phase 2 */}
-          <span className="md:hidden" aria-hidden="true">
-            <Button variant="ghost" size="icon" disabled aria-label="Menu (coming in Phase 2)">
+          {/* Mobile hamburger — opens the full More sheet */}
+          <span className="md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Open menu"
+              aria-haspopup="dialog"
+              aria-expanded={moreOpen}
+              onClick={() => setMoreOpen(true)}
+            >
               <Menu className="h-5 w-5" />
             </Button>
           </span>
         </div>
       </div>
+      <MoreSheet open={moreOpen} onOpenChange={setMoreOpen} />
     </header>
   );
 }

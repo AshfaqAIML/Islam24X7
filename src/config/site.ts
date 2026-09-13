@@ -13,6 +13,18 @@ export type NavItem = {
   phase?: number;
 };
 
+export type TabItem = {
+  key: string;
+  label: string;
+  /** Lucide icon name shared with home module grid maps. */
+  icon: "home" | "book-open-text" | "search" | "library" | "menu";
+  href?: string;
+  /** Opens the More sheet instead of navigating. */
+  action?: "more";
+  soon?: boolean;
+  phase?: number;
+};
+
 export const routes = {
   home: "/",
   download: "/download",
@@ -37,6 +49,28 @@ export const mainNav: NavItem[] = [
   { label: "Library", href: routes.library, soon: true, phase: 3 },
   { label: "Ask AI", href: routes.ai, soon: true, phase: 9 },
 ];
+
+/**
+ * Mobile bottom tab bar (Phase 2). Exactly five slots, thumb-reachable;
+ * modules that have not shipped yet stay visible but clearly "Soon".
+ */
+export const tabNav: TabItem[] = [
+  { key: "home", label: "Home", icon: "home", href: routes.home },
+  { key: "quran", label: "Quran", icon: "book-open-text", soon: true, phase: 6 },
+  { key: "search", label: "Search", icon: "search", soon: true, phase: 5 },
+  { key: "library", label: "Library", icon: "library", soon: true, phase: 3 },
+  { key: "more", label: "More", icon: "menu", action: "more" },
+];
+
+/**
+ * Build status — drives the honest phase-progress indicator on Home.
+ * Keep in sync with docs/ARCHITECTURE.md §6.
+ */
+export const buildProgress = {
+  currentPhase: 2,
+  totalPhases: 16,
+  phaseLabel: "Home & navigation shell",
+} as const;
 
 /**
  * Modules showcased on the Phase-1 home page.

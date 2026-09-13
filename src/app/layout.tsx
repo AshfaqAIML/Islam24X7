@@ -7,6 +7,7 @@ import { brand } from "@/config/brand";
 import { siteConfig } from "@/config/site";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { BottomTabBar } from "@/components/layout/bottom-tab-bar";
 import { ApkPromptProvider } from "@/components/apk/apk-prompt-provider";
 
 const bodyFont = Inter({
@@ -102,6 +103,12 @@ export default function RootLayout({
             {children}
           </div>
           <SiteFooter />
+          {/* Clearance for the fixed mobile tab bar so it never covers the footer */}
+          <div
+            aria-hidden="true"
+            className="h-[calc(4.5rem+env(safe-area-inset-bottom))] md:hidden"
+          />
+          <BottomTabBar />
           <ApkPromptProvider />
           <Toaster />
         </ThemeProvider>

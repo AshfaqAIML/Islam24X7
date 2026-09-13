@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Smartphone } from "lucide-react";
 import { brand } from "@/config/brand";
-import { routes } from "@/config/site";
+import { buildProgress, routes } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { StarLattice } from "@/components/decor/islamic-pattern";
 
@@ -43,7 +43,8 @@ export function Hero() {
         <motion.div {...fadeUp(0)}>
           <span className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-secondary/70 px-3 py-1 text-xs font-medium text-secondary-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-            Foundations · Phase 1 of 16
+            Building · Phase {buildProgress.currentPhase} of{" "}
+            {buildProgress.totalPhases}
           </span>
         </motion.div>
 

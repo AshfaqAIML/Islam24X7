@@ -127,10 +127,10 @@ export default async function DownloadPage() {
                 className="mt-6 flex items-start gap-2.5 rounded-lg border border-gold/30 bg-gold/10 p-3.5"
               >
                 <ShieldCheck
-                  className="mt-0.5 h-4 w-4 shrink-0 text-gold-foreground"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-gold-foreground dark:text-gold"
                   aria-hidden="true"
                 />
-                <p className="text-xs leading-relaxed text-gold-foreground">
+                <p className="text-xs leading-relaxed text-gold-foreground dark:text-gold/90">
                   <strong>Security notice:</strong> only download this app from
                   this official page. Android may warn about apps installed
                   outside the Play Store — that is expected for direct APK

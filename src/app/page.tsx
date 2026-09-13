@@ -8,6 +8,11 @@ import {
 import { getApkRelease, isApkAvailable } from "@/config/apk-release";
 import type { ApkReleaseStatus } from "@/types/knowledge-base";
 import { Hero } from "@/components/home/hero";
+import { GreetingCard } from "@/components/home/greeting-card";
+import { DailyAyahCard } from "@/components/home/daily-ayah-card";
+import { TasbeehCard } from "@/components/home/tasbeeh-card";
+import { ContinueReadingCard } from "@/components/home/continue-reading-card";
+import { PhaseProgress } from "@/components/home/phase-progress";
 import { ModuleGrid } from "@/components/home/module-grid";
 import { DesignPreview } from "@/components/home/design-preview";
 import { InstallAppBanner } from "@/components/apk/install-app-banner";
@@ -49,6 +54,42 @@ export default async function HomePage() {
         <div className="mt-6 sm:mt-8">
           <InstallAppBanner status={status} />
         </div>
+      </div>
+
+      {/* Today — personal dashboard strip */}
+      <section aria-labelledby="today-heading" className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
+        <div className="mb-5 flex items-center justify-between gap-3">
+          <h2 id="today-heading" className="font-serif text-xl font-semibold tracking-tight sm:text-2xl">
+            Today
+          </h2>
+          <span className="text-xs text-muted-foreground">
+            Your daily starting point
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <GreetingCard />
+
+          <div className="grid gap-4 md:grid-cols-5">
+            <div className="md:col-span-3">
+              <DailyAyahCard />
+            </div>
+            <div className="md:col-span-2">
+              <TasbeehCard />
+            </div>
+          </div>
+
+          <ContinueReadingCard />
+        </div>
+      </section>
+
+      <div className="mx-auto max-w-6xl px-4">
+        <PhaseProgress />
+        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+          Nothing is simulated: modules below activate with real Knowledge Base
+          data as their phases ship. Preview content on this page is clearly
+          labeled and never presented as scripture.
+        </p>
       </div>
 
       <ModuleGrid />
