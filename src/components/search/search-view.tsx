@@ -325,11 +325,14 @@ export function SearchView() {
       >
         {scopeTabs.map((tab) => {
           const active = scopeFromUrl === tab.value;
-          // Quran/Hadith unlock when the live Knowledge Base is reachable;
+          // Quran/Hadith unlock when the live Knowledge Base is reachable
+          // OR when ingested volumes cover them (the API drops the scope
+          // from unavailableScopes and reports source "live" in that case).
           // Duas stay gated until their content lands (Phase 10).
           const unlocked =
             tab.value === "quran" || tab.value === "hadith"
-              ? data?.source === "live"
+              ? data?.source === "live" ||
+                (data != null && !(tab.value in (data.unavailableScopes ?? {})))
               : false;
           if (tab.phase != null && !unlocked) {
             return (

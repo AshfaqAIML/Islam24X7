@@ -57,6 +57,8 @@ export default async function BookDetailPage({ params }: PageProps) {
   const fileSize = (book as { fileSize?: number }).fileSize;
   const series = (book as { series?: string }).series;
   const isReal = book.id.startsWith("upload-") || Boolean(fileUrl);
+  const isPdf =
+    Boolean(fileUrl) && fileUrl!.toLowerCase().split("?")[0].endsWith(".pdf");
 
   return (
     <main className="flex-1">
@@ -137,7 +139,11 @@ export default async function BookDetailPage({ params }: PageProps) {
               <div className="flex items-center gap-1.5">
                 <Layers className="h-4 w-4" aria-hidden="true" />
                 <dt className="sr-only">Chapters</dt>
-                <dd>{chapters.length} chapters</dd>
+                <dd>
+                  {isReal && chapters.length === 0
+                    ? "Full volume"
+                    : `${chapters.length} chapters`}
+                </dd>
               </div>
               {typeof fileSize === "number" && fileSize > 0 ? (
                 <div className="flex items-center gap-1.5">
@@ -178,6 +184,14 @@ export default async function BookDetailPage({ params }: PageProps) {
                 </Button>
               )}
               <FavoriteButton bookId={book.id} bookTitle={book.title} size="lg" />
+              {isReal && isPdf ? (
+                <Button asChild size="lg" variant="outline" className="gap-2">
+                  <Link href={`/library/${book.id}/read`}>
+                    <BookOpen className="h-4 w-4" aria-hidden="true" />
+                    Read online
+                  </Link>
+                </Button>
+              ) : null}
             </div>
             <div className="mt-2.5">
               <Button
@@ -198,9 +212,10 @@ export default async function BookDetailPage({ params }: PageProps) {
             >
               {isReal ? (
                 <>
-                  Best on mobile too — the same file serves the Android app
-                  through <code className="rounded bg-muted px-1">/api/books</code>.
-                  In-page reading for scanned volumes arrives with text processing.
+                  Read it right here with <strong>Read online</strong>, download
+                  it, or open the same file in the Android app through{" "}
+                  <code className="rounded bg-muted px-1">/api/books</code>.
+                  Text search and chapters arrive with text processing.
                 </>
               ) : (
                 <>

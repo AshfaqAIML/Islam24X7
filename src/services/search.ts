@@ -22,6 +22,7 @@ import type {
 import { demoBooks, demoChaptersFor } from "@/lib/demo/books";
 import { demoPagesFor } from "@/lib/demo/pages";
 import { kbDataSource, kbFetch } from "@/services/kb";
+import { listReadyBooks } from "@/services/uploads";
 
 export interface SearchParams {
   q: string;
@@ -200,6 +201,78 @@ function searchPagesDemo(terms: string[], limit: number): ScoredHit[] {
 
 function parseTerms(q: string): string[] {
   return Array.from(new Set(q.trim().toLowerCase().split(/\s+/).filter(Boolean)));
+}
+
+/* --------------------------- uploaded books ------------------------------ */
+
+/** Categories each frontend scope draws from the local upload store. */
+const UPLOAD_SCOPE_CATEGORIES: Partial<Record<SearchScope, string[]>> = {
+  all: [],
+  books: [],
+  quran: ["tafsir", "quran-sciences"],
+  hadith: ["hadith"],
+};
+
+/**
+ * Real ingested volumes always participate in search — they live in our
+ * own database whether or not the external Knowledge Base is reachable.
+ * Ranked above demo placeholders (they are fetchable right now).
+ */
+async function searchUploads(
+  terms: string[],
+  limit: number,
+  scope: SearchScope
+): Promise<ScoredHit[]> {
+  let books: Awaited<ReturnType<typeof listReadyBooks>>;
+  try {
+    books = await listReadyBooks();
+  } catch {
+    return [];
+  }
+  const only = UPLOAD_SCOPE_CATEGORIES[scope];
+  if (only && only.length > 0) {
+    books = books.filter((b) => only.includes(b.category));
+  }
+  const hits: ScoredHit[] = [];
+  for (const book of books) {
+    const title = book.title;
+    const author = book.author;
+    const series =
+      "series" in book && typeof book.series === "string" ? book.series : "";
+    const description = book.description ?? "";
+    const haystack = `${title} ${author} ${series} ${description}`.toLowerCase();
+
+    if (!terms.every((t) => haystack.includes(t))) continue;
+
+    let score = 0;
+    if (terms.some((t) => title.toLowerCase().includes(t))) score += 40;
+    if (author.toLowerCase().includes(terms[0] ?? "")) score += 25;
+    if (series && series.toLowerCase().includes(terms[0] ?? "")) score += 20;
+    if (description.toLowerCase().includes(terms[0] ?? "")) score += 15;
+    score += terms.length;
+
+    const meta = [
+      series,
+      book.pageCount ? `${book.pageCount} pages` : "",
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    hits.push({
+      score,
+      hit: {
+        citation: {
+          id: `cite-${book.id}`,
+          source: { type: "book", bookId: book.id, bookTitle: title },
+        },
+        title,
+        excerpt:
+          excerptAround(description || meta || title, terms) +
+          (meta && description ? ` — ${highlight(meta, terms)}` : ""),
+      },
+    });
+    if (hits.length >= limit) break;
+  }
+  return hits;
 }
 
 function searchDemo(params: SearchParams): SearchResultPage {
@@ -391,13 +464,46 @@ async function searchLive(params: SearchParams): Promise<SearchResultPage> {
 /* -------------------------------- public ---------------------------------- */
 
 export async function search(params: SearchParams): Promise<SearchResultPage> {
+  const scope: SearchScope = params.scope ?? "all";
+  const limit = Math.min(50, Math.max(1, params.limit ?? 24));
+
+  let base: SearchResultPage;
   if (kbDataSource() === "live") {
     try {
-      return await searchLive(params);
+      base = await searchLive(params);
     } catch {
       // Degrade honestly: the UI shows a "live source unreachable" note.
-      return searchDemo(params);
+      base = searchDemo(params);
+    }
+  } else {
+    base = searchDemo(params);
+  }
+
+  // Real ingested volumes join every book-bearing scope. Scopes unlock as
+  // soon as matching uploads exist — no Knowledge Base required.
+  if (scope !== "dua" && parseTerms(params.q).length > 0) {
+    const terms = parseTerms(params.q);
+    const uploadHits = (await searchUploads(terms, limit, scope)).map(
+      (s) => s.hit
+    );
+    if (uploadHits.length > 0) {
+      base.hits = [...uploadHits, ...base.hits].slice(0, limit);
+      base.total = base.hits.length;
+      base.source = "live";
+    }
+    try {
+      const all = await listReadyBooks();
+      const hasQuran = all.some((b) =>
+        (UPLOAD_SCOPE_CATEGORIES.quran ?? []).includes(b.category)
+      );
+      const hasHadith = all.some((b) =>
+        (UPLOAD_SCOPE_CATEGORIES.hadith ?? []).includes(b.category)
+      );
+      if (hasQuran) delete base.unavailableScopes.quran;
+      if (hasHadith) delete base.unavailableScopes.hadith;
+    } catch {
+      /* catalogue check failed — keep the honest locked state */
     }
   }
-  return searchDemo(params);
+  return base;
 }

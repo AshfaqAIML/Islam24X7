@@ -47,10 +47,10 @@ export const mainNav: NavItem[] = [
   { label: "Home", href: routes.home },
   { label: "Library", href: routes.library },
   { label: "Upload", href: routes.upload },
+  { label: "Quran", href: `${routes.library}?category=tafsir` },
+  { label: "Hadith", href: `${routes.library}?category=hadith` },
   { label: "Search", href: routes.search },
   { label: "Ask AI", href: routes.ai },
-  { label: "Quran", href: routes.quran, soon: true, phase: 6 },
-  { label: "Hadith", href: routes.hadith, soon: true, phase: 7 },
 ];
 
 /**
@@ -61,7 +61,12 @@ export const mainNav: NavItem[] = [
  */
 export const tabNav: TabItem[] = [
   { key: "home", label: "Home", icon: "home", href: routes.home },
-  { key: "quran", label: "Quran", icon: "book-open-text", soon: true, phase: 6 },
+  {
+    key: "quran",
+    label: "Quran",
+    icon: "book-open-text",
+    href: `${routes.library}?category=tafsir`,
+  },
   { key: "library", label: "Library", icon: "library", href: routes.library },
   { key: "ai", label: "Ask AI", icon: "sparkles", href: routes.ai },
   { key: "more", label: "More", icon: "menu", action: "more" },
@@ -85,16 +90,22 @@ export const moduleShowcase = [
   {
     key: "quran",
     title: "Quran",
-    description: "Surahs, ayah-by-ayah reading, translations, bookmarks.",
+    description:
+      "Tibyan-ul-Quran in 13 volumes plus Kanzul Iman with Khazain-ul-Irfan — read and download now; ayah-by-ayah views land in Phase 6.",
     icon: "book-open-text",
     phase: 6,
+    live: true,
+    href: "/library?category=tafsir",
   },
   {
     key: "hadith",
     title: "Hadith",
-    description: "Collections → books → chapters, with grading where reliable.",
+    description:
+      "Bukhari, Muslim, Tirmidhi, Ibn Majah and Nasai — 13 translated volumes, read and download now; graded browser lands in Phase 7.",
     icon: "scroll-text",
     phase: 7,
+    live: true,
+    href: "/library?category=hadith",
   },
   {
     key: "library",
