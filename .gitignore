@@ -90,6 +90,8 @@ data/quarantine/*
 !data/quarantine/README.md
 data/raw/**/*.pdf
 
-# Local book source library (large PDFs live in R2 after ingestion;
-# per-volume ingest manifests remain tracked).
-Books/**/*.pdf
+# Local book source library: only per-volume ingest manifests are tracked.
+# PDFs, partial downloads and datasets stay on disk / in R2 after ingestion.
+Books/**/*
+!Books/**/ingest-manifest.json
+!Books/**/tibyan-manifest.json
