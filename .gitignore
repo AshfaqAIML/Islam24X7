@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -52,3 +53,43 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# local dev database
+db/*.db
+db/*.db-journal
+prisma/db/
+prisma/*.db
+prisma/*.db-journal
+# uploaded book files (served from public/uploads in dev, object storage in prod)
+public/uploads/
+data/uploads/
+# tool output captures
+tool-results/
+.zscripts/dev.pid
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Knowledge-Base data - derived content and source PDFs are not committed.
+# README files explaining each directory remain tracked.
+data/processed/*
+!data/processed/README.md
+data/exports/*
+!data/exports/README.md
+data/quarantine/*
+!data/quarantine/README.md
+data/raw/**/*.pdf
+
+# Local book source library (large PDFs live in R2 after ingestion;
+# per-volume ingest manifests remain tracked).
+Books/**/*.pdf

@@ -61,12 +61,15 @@ const scopeTabs: ScopeTab[] = [
   { value: "dua", label: "Duas", phase: 10 },
 ];
 
-const typeChips: Array<{ value: HitKind | "all"; label: string }> = [
-  { value: "all", label: "All types" },
-  { value: "book", label: "Books" },
-  { value: "chapter", label: "Chapters" },
-  { value: "page", label: "Pages" },
-];
+const KIND_LABELS: Record<HitKind, string> = {
+  book: "Books",
+  chapter: "Chapters",
+  page: "Pages",
+  quran: "Quran",
+  hadith: "Hadith",
+};
+
+const KIND_ORDER: HitKind[] = ["book", "chapter", "page", "quran", "hadith"];
 
 const suggestionChips = [
   "seerah",
@@ -223,15 +226,28 @@ export function SearchView() {
   /* ------------------------------- derived ------------------------------- */
 
   const hits: SearchHit[] = data?.hits ?? [];
-  const { availableKinds, kindCounts } = useMemo(() => {
+  const { availableKinds, kindCounts, typeChips } = useMemo(() => {
     const kinds = new Set<HitKind>();
-    const counts: Record<HitKind, number> = { book: 0, chapter: 0, page: 0 };
+    const counts: Record<HitKind, number> = {
+      book: 0,
+      chapter: 0,
+      page: 0,
+      quran: 0,
+      hadith: 0,
+    };
     for (const hit of hits) {
       const k = hitKind(hit);
       kinds.add(k);
       counts[k] += 1;
     }
-    return { availableKinds: kinds, kindCounts: counts };
+    const chips: Array<{ value: HitKind | "all"; label: string }> = [
+      { value: "all", label: "All types" },
+      ...KIND_ORDER.filter((k) => kinds.has(k)).map((k) => ({
+        value: k,
+        label: KIND_LABELS[k],
+      })),
+    ];
+    return { availableKinds: kinds, kindCounts: counts, typeChips: chips };
   }, [hits]);
 
   // The type filter self-heals: when a new search yields no hits of the
@@ -309,7 +325,13 @@ export function SearchView() {
       >
         {scopeTabs.map((tab) => {
           const active = scopeFromUrl === tab.value;
-          if (tab.phase != null) {
+          // Quran/Hadith unlock when the live Knowledge Base is reachable;
+          // Duas stay gated until their content lands (Phase 10).
+          const unlocked =
+            tab.value === "quran" || tab.value === "hadith"
+              ? data?.source === "live"
+              : false;
+          if (tab.phase != null && !unlocked) {
             return (
               <span
                 key={tab.value}
@@ -519,18 +541,28 @@ export function SearchView() {
         <CardContent className="flex items-start gap-3 p-4 text-xs leading-relaxed text-muted-foreground">
           <Search className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <p>
-            Searching <strong>labeled demo records</strong> (books, chapters and
-            placeholder pages) until the Knowledge Base connects. Quran, Hadith
-            and Dua scopes activate in their phases — they are never simulated.
-            Press{" "}
-            <kbd className="rounded border bg-muted px-1 font-mono text-[10px]">
-              Enter
-            </kbd>{" "}
-            to search,{" "}
-            <kbd className="rounded border bg-muted px-1 font-mono text-[10px]">
-              /
-            </kbd>{" "}
-            to refocus.
+            {data?.source === "live" ? (
+              <>
+                Results come from the <strong>live Knowledge Base</strong> —
+                Quran, Hadith and Book content included. Quran/Hadith "Open
+                source" deep links arrive with their reader phases.
+              </>
+            ) : (
+              <>
+                Searching <strong>labeled demo records</strong> (books, chapters
+                and placeholder pages) until the Knowledge Base connects. Quran,
+                Hadith and Dua scopes activate in their phases — they are never
+                simulated. Press{" "}
+                <kbd className="rounded border bg-muted px-1 font-mono text-[10px]">
+                  Enter
+                </kbd>{" "}
+                to search,{" "}
+                <kbd className="rounded border bg-muted px-1 font-mono text-[10px]">
+                  /
+                </kbd>{" "}
+                to refocus.
+              </>
+            )}
           </p>
           <CornerDownLeft
             className="ml-auto hidden h-3.5 w-3.5 shrink-0 text-muted-foreground/50 sm:block"

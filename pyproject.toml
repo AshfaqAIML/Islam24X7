@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "islam24x7-knowledge-base"
+version = "0.1.0"
+description = "Local, Python-based Islamic Knowledge Base processing system"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Proprietary" }
+authors = [{ name = "Islam24x7" }]
+keywords = ["islamic", "knowledge-base", "quran", "hadith", "rag"]
+dependencies = [
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "loguru>=0.7",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.1",
+    "pgvector>=0.3",
+    "pymupdf>=1.24",
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.4",
+    "easyocr>=1.7.2",
+    "sentence-transformers>=6.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "mypy>=1.10",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+knowledge-base = "knowledge_base.cli:main"
+kb = "knowledge_base.cli.kb:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["SIM"]
+"src/knowledge_base/database/migrations/**" = ["E501", "I001", "UP035", "UP007"]
+"src/knowledge_base/database/enums.py" = ["UP042"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_ignores = true
+exclude = "src/knowledge_base/database/migrations/"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+]

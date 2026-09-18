@@ -6,7 +6,20 @@ Islam24x7 is a modern Islamic knowledge platform for reading the Quran,
 exploring Hadith, browsing a structured Islamic library, and asking an AI
 research assistant — every answer grounded in verifiable, citable sources.
 One codebase ships both a **responsive web app** and an **installable Android
-APK**.
+APK**, backed by a **Python knowledge-base pipeline** that ingests books and
+serves search/RAG over them.
+
+```
+Books/ (local source PDFs) ──▶ /admin/upload ──▶ R2 object storage ──┐
+     Python pipeline (OCR → chunks → vectors → kb serve) ────────────┼──▶ Next.js
+     Neon Postgres (upload catalogue) ───────────────────────────────┘    (this repo root)
+```
+
+| | |
+|---|---|
+| **Web app** | Next.js 16 · React 19 · TypeScript · Tailwind 4 · Prisma (this root) |
+| **Knowledge Base** | Python 3.12 · FastAPI · Postgres + pgvector · EasyOCR (`src/knowledge_base/`, `pyproject.toml`) |
+| **Platforms** | Web (Responsive + PWA-ready) and Android (Capacitor) from one codebase |
 
 ---
 
@@ -189,3 +202,35 @@ See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the full screen map.
 - [`docs/API.md`](docs/API.md) — API contract
 - [`docs/APK_RELEASE.md`](docs/APK_RELEASE.md) — APK release workflow
 - [`docs/ANDROID.md`](docs/ANDROID.md) — Android build guide
+
+---
+
+## Knowledge-Base pipeline (Python)
+
+> **Source fidelity is the top priority.** Original source files are never
+> modified. Every processed passage keeps a chain of provenance back to its
+> source file and page. No Islamic content is ever invented or silently
+> corrected.
+
+The pipeline ingests Quran datasets, hadith collections, and Islamic books
+(PDF-first), converting them into a validated, traceable knowledge base with
+full-text + semantic search, source-grounded Q&A (RAG), and a JSON HTTP API.
+
+| Workstream | Deliverable |
+| ---------- | ----------- |
+| CLI | `kb` command-line operator (`src/knowledge_base/cli/`) |
+| Coverage | 24 test modules (`tests/test_*.py`, 315 tests) |
+| RAG | Source-grounded retrieval + extractive generation (`kb ask`) |
+| API | FastAPI backend (`kb serve`, default `http://127.0.0.1:8000`) |
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+```
+
+Copy `.env.example` to `.env` and adjust the `KB_*` database settings
+(Postgres 16 + `vector` extension, dev container on port 5434). Gates:
+`pytest`, `ruff check .`, `mypy src` — all clean. Full docs:
+[`docs/kb-architecture.md`](docs/kb-architecture.md),
+[`docs/pipeline.md`](docs/pipeline.md), [`docs/cli.md`](docs/cli.md).

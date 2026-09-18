@@ -1,0 +1,23 @@
+[
+ {
+  "file": "sahih_al_bukhari_vol_1.pdf",
+  "bytes": 134370672,
+  "pages": 1018,
+  "sha256": "cec339cf2111a804b491e2c08575f6f4d3c8a3b1e2ee79dabdf0e5a283438841",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "sahih_al_bukhari_vol_2.pdf",
+  "bytes": 177448631,
+  "pages": 1033,
+  "sha256": "6562baa2ba67539eb7d7da9ae36801777baa0d27ce0292b06eb5e1d24a6c452d",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "sahih_al_bukhari_vol_3.pdf",
+  "bytes": 143942147,
+  "pages": 976,
+  "sha256": "9fd457a528a500bc6700e1344889f187683e306634fc7be79bb610978affe52b",
+  "sampleTextChars": 0
+ }
+]

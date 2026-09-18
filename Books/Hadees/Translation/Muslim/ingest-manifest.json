@@ -1,0 +1,23 @@
+[
+ {
+  "file": "sahih_muslim_vol_1.pdf",
+  "bytes": 99632988,
+  "pages": 829,
+  "sha256": "28631d51686f9b22c702cf512cadb77ee6a906ce05e6455ed34c1a0acad9520d",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "sahih_muslim_vol_2.pdf",
+  "bytes": 84845349,
+  "pages": 697,
+  "sha256": "f0155fbd9bd874a1b33b80c18b083f800aa77dd22139bb803ff3702ab1d71581",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "sahih_muslim_vol_3.pdf",
+  "bytes": 87630543,
+  "pages": 720,
+  "sha256": "1311ef643cad8c6ebbc143081ffeac2b9c1426e204400ef5e727d7e46932655f",
+  "sampleTextChars": 0
+ }
+]

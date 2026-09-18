@@ -1,0 +1,93 @@
+[
+ {
+  "file": "tibyan-ul-quran-vol-01.pdf",
+  "volume": 1,
+  "bytes": 37790731,
+  "pages": 1053,
+  "sha256": "f4c610e9060e4e3d6a43567949247e3d5f3fe846ee706c8910273e6c8444e7cd"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-02.pdf",
+  "volume": 2,
+  "bytes": 33496487,
+  "pages": 919,
+  "sha256": "ca5c14d385896e08c7f2cb652fdfe25d373695d7cf8cc653a592f2307ff0297e"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-03.pdf",
+  "volume": 3,
+  "bytes": 26761752,
+  "pages": 731,
+  "sha256": "e4db5477e6a85cdac230980d5f651a6855ca7fcafc90ef81302e67ac4f9abdc0"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-04.pdf",
+  "volume": 4,
+  "bytes": 26650920,
+  "pages": 747,
+  "sha256": "90071e0e13e832a4734d8596b1de520593ac8eaf0240be4575bda47a42eb18c6"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-05.pdf",
+  "volume": 5,
+  "bytes": 31695458,
+  "pages": 909,
+  "sha256": "b40b9055e0b0bca9e3613de1fb6dc27186d16874bad38566e1c856caee5f0456"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-06.pdf",
+  "volume": 6,
+  "bytes": 31162957,
+  "pages": 843,
+  "sha256": "be07f486a8c145bec2430326fa5de709707bd9bb9d993c6cafc357a1fc9bac9a"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-07.pdf",
+  "volume": 7,
+  "bytes": 65687462,
+  "pages": 940,
+  "sha256": "24b8a8f7b788faa104cc1ac5289713819dff9d69072654261f265b5166115dda"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-08.pdf",
+  "volume": 8,
+  "bytes": 60558301,
+  "pages": 874,
+  "sha256": "d3a108c71913847babb0fbebcef23c61d5eb34e98339808cb68c6189b2de79c4"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-09.pdf",
+  "volume": 9,
+  "bytes": 91344932,
+  "pages": 994,
+  "sha256": "610462f4cb72a6cf991c1ae7081eb6a87ff0de441524222c40a8a38f266f4d61"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-10.pdf",
+  "volume": 10,
+  "bytes": 56904496,
+  "pages": 845,
+  "sha256": "62e855a1f50fba1eeec22bd83d6faa4d6367b998813ee9731a38f4da930246d6"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-11.pdf",
+  "volume": 11,
+  "bytes": 34109662,
+  "pages": 947,
+  "sha256": "a1c3dbf4497c842abd488e2c7b8b3f2e63345f59a3890eab8d932d8ed584e661"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-12.pdf",
+  "volume": 12,
+  "bytes": 37790555,
+  "pages": 1089,
+  "sha256": "79eb100a5ad5566722e88070c7352daceb25360547c59d97453ce2f14fccf93a"
+ },
+ {
+  "file": "tibyan-ul-quran-vol-13.pdf",
+  "volume": 13,
+  "bytes": 20312701,
+  "pages": 643,
+  "sha256": "acf8732d897171a832aad8722b01a39a3c6f1fc810467961c6793ac4c5b7fc42"
+ }
+]

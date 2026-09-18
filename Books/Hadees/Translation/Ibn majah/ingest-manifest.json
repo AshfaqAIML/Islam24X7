@@ -1,0 +1,16 @@
+[
+ {
+  "file": "sunan_ibn_majah_vol_1.pdf",
+  "bytes": 84580912,
+  "pages": 615,
+  "sha256": "29c2e46f3256bbc7e0b6749496976e58d4fa471ec53cc1f6be08fbef0f91056f",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "sunan_ibn_majah_vol_2.pdf",
+  "bytes": 84723559,
+  "pages": 609,
+  "sha256": "5079729b8c5910b43aa7274166c569549aad7623895cca1e493d9f45d5c8d548",
+  "sampleTextChars": 0
+ }
+]

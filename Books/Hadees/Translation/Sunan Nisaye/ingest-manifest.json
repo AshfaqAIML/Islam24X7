@@ -1,0 +1,23 @@
+[
+ {
+  "file": "Sunan Nisaye 2.pdf",
+  "bytes": 68397216,
+  "pages": 582,
+  "sha256": "2c9908719b4e4e3d18736c6ccdaa2e76abfab8e1315c214926b5c48faf049000",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "Sunan Nisaye 3.pdf",
+  "bytes": 56193391,
+  "pages": 445,
+  "sha256": "f2e21087973f5828766402ad1fb21234602268e83c77b5385980da294d0d22f1",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "Sunan Nisaye1.pdf",
+  "bytes": 79542897,
+  "pages": 647,
+  "sha256": "2f7ed2832f875fa3c94d15e3109238f3e759763994f5d43f211c51892b193f62",
+  "sampleTextChars": 0
+ }
+]
