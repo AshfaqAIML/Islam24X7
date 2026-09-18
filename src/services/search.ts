@@ -14,6 +14,7 @@
  */
 import type {
   Book,
+  Citation,
   SearchHit,
   SearchResponse,
   SearchScope,
@@ -253,19 +254,138 @@ function searchDemo(params: SearchParams): SearchResultPage {
 
 /* --------------------------------- live ----------------------------------- */
 
-function searchLive(params: SearchParams): Promise<SearchResultPage> {
-  const started = Date.now();
-  const sp = new URLSearchParams();
-  sp.set("q", params.q);
-  if (params.scope && params.scope !== "all") sp.set("scope", params.scope);
-  if (params.limit) sp.set("limit", String(params.limit));
+/** One hit as the Knowledge Base /search endpoint returns it (asdict JSON). */
+interface BackendSearchHit {
+  domain: string;
+  rank: number;
+  title: string;
+  matched_text: string;
+  snippet: string;
+  language: string;
+  book?: string | null;
+  author?: string | null;
+  category?: string | null;
+  chapter?: string | null;
+  section?: string | null;
+  page?: number | null;
+  citation?: string | null;
+  book_id?: string | null;
+  chapter_id?: string | null;
+  section_id?: string | null;
+  source_file_id?: string | null;
+  source_sha256?: string | null;
+  chunk_id?: string | null;
+}
 
-  return kbFetch<SearchResponse>(`/search?${sp.toString()}`).then((res) => ({
-    ...res,
-    source: "live" as const,
+interface BackendSearchResponse {
+  query: string;
+  hits: BackendSearchHit[];
+}
+
+/** Backend domains searched for each frontend scope (dua is not shipped yet). */
+const SCOPE_DOMAINS: Partial<Record<SearchScope, string[]>> = {
+  all: ["content", "book", "chapter", "section", "quran", "hadith"],
+  books: ["content", "book", "chapter", "section"],
+  quran: ["quran"],
+  hadith: ["hadith"],
+};
+
+/** ts_headline emits <b>; the UI contract is <mark>. Escape, then swap tags. */
+function toExcerpt(hit: BackendSearchHit): string {
+  const raw = hit.snippet || hit.matched_text || "";
+  return escapeHtml(raw).replace(/&lt;b&gt;/g, "<mark>").replace(/&lt;\/b&gt;/g, "</mark>");
+}
+
+function toCitation(hit: BackendSearchHit): Citation {
+  if (hit.domain === "quran") {
+    const base = (hit.citation ?? "0:0").split(" (")[0];
+    const [s, a] = base.split(":").map((v) => Number.parseInt(v, 10));
+    return {
+      id: `${hit.domain}-${hit.citation ?? hit.chunk_id ?? hit.rank}`,
+      source: {
+        type: "quran",
+        surah: Number.isFinite(s) ? s : 0,
+        ayah: Number.isFinite(a) ? a : 0,
+        surahName: hit.chapter ?? undefined,
+      },
+    };
+  }
+  if (hit.domain === "hadith") {
+    const raw = hit.citation ?? "";
+    const sep = raw.indexOf(" #");
+    const collection = sep === -1 ? raw : raw.slice(0, sep);
+    const hadithNumber = sep === -1 ? "" : raw.slice(sep + 2);
+    return {
+      id: `${hit.domain}-${hit.citation ?? hit.chunk_id ?? hit.rank}`,
+      source: {
+        type: "hadith",
+        collection,
+        hadithNumber,
+        book: hit.section ?? undefined,
+        chapter: hit.chapter ?? undefined,
+      },
+    };
+  }
+  return {
+    id: `${hit.domain}-${hit.citation ?? hit.chunk_id ?? hit.rank}`,
+    source: {
+      type: "book",
+      bookId: hit.book_id ?? hit.chunk_id ?? hit.source_file_id ?? `kb-${hit.rank}`,
+      bookTitle: hit.title,
+      chapterId: hit.chapter_id ?? undefined,
+      chapterTitle: hit.chapter ?? undefined,
+      page: hit.page ?? undefined,
+      passageId: hit.chunk_id ?? undefined,
+    },
+  };
+}
+
+async function searchLive(params: SearchParams): Promise<SearchResultPage> {
+  const started = Date.now();
+  const scope: SearchScope = params.scope ?? "all";
+  const limit = Math.min(100, Math.max(1, params.limit ?? 24));
+
+  if (scope === "dua") {
+    const startedFallback = Date.now();
+    return {
+      query: params.q.trim(),
+      scope,
+      total: 0,
+      hits: [],
+      source: "live",
+      durationMs: Date.now() - startedFallback,
+      unavailableScopes: { dua: 10 },
+    };
+  }
+
+  const body = {
+    query: params.q.trim(),
+    domains: SCOPE_DOMAINS[scope] ?? ["content", "book", "chapter", "section", "quran", "hadith"],
+    all_terms: false,
+    limit,
+  };
+  const res = await kbFetch<BackendSearchResponse>("/search", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const hits: SearchHit[] = res.hits.map((h) => ({
+    citation: toCitation(h),
+    title: h.title,
+    excerpt: toExcerpt(h),
+    score: h.rank,
+  }));
+
+  return {
+    query: res.query,
+    scope,
+    total: hits.length,
+    hits,
+    source: "live",
     durationMs: Date.now() - started,
     unavailableScopes: {},
-  }));
+  };
 }
 
 /* -------------------------------- public ---------------------------------- */

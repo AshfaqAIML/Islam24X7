@@ -1,0 +1,16 @@
+[
+ {
+  "file": "jamiy_tirmidhi_vol_1.pdf",
+  "bytes": 136387737,
+  "pages": 972,
+  "sha256": "5ed341660ff96a4889e9a0cf19d3ed1b2d0f124846bd24d740a4ff5b9cf1c3d7",
+  "sampleTextChars": 0
+ },
+ {
+  "file": "jamiy_tirmidhi_vol_2.pdf",
+  "bytes": 124294535,
+  "pages": 918,
+  "sha256": "0bec34299511d618879d4712e77edda610e34fcc29c882409f72ec8da9f50722",
+  "sampleTextChars": 0
+ }
+]
