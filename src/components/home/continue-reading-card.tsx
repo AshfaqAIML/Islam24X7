@@ -52,6 +52,12 @@ export function ContinueReadingCard() {
               <p className="truncate text-xs text-muted-foreground">
                 {latest.chapterTitle}
               </p>
+            ) : typeof latest.page === "number" &&
+              typeof latest.pageCount === "number" ? (
+              <p className="truncate text-xs tabular-nums text-muted-foreground">
+                Page {latest.page.toLocaleString()} of{" "}
+                {latest.pageCount.toLocaleString()}
+              </p>
             ) : null}
             <div className="mt-2 flex items-center gap-2">
               <Progress
@@ -69,7 +75,9 @@ export function ContinueReadingCard() {
               href={
                 latest.chapterId
                   ? `/library/${latest.bookId}/read?chapter=${latest.chapterId}`
-                  : `/library/${latest.bookId}/read`
+                  : typeof latest.page === "number" && latest.page > 1
+                    ? `/library/${latest.bookId}/read?page=${latest.page}`
+                    : `/library/${latest.bookId}/read`
               }
             >
               <Play className="h-3.5 w-3.5" aria-hidden="true" />
