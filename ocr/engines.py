@@ -93,22 +93,46 @@ class TesseractEngine:
     name = "tesseract"
     supports_pages = True
 
+    # Windows default install location (UB Mannheim build) — used when
+    # tesseract is not on PATH.
+    _WINDOWS_DEFAULT = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+    @classmethod
+    def exe(cls) -> str | None:
+        """Resolved tesseract binary or None."""
+        import os
+
+        found = shutil.which("tesseract")
+        if found:
+            return found
+        if os.path.isfile(cls._WINDOWS_DEFAULT):
+            return cls._WINDOWS_DEFAULT
+        return None
+
     def is_available(self) -> bool:
-        return shutil.which("tesseract") is not None
+        return self.exe() is not None
 
     def missing_hint(self) -> str:
         return (
             "tesseract not found. Windows: install the UB Mannheim build "
-            "(github.com/UB-Mannheim/tesseract/wiki) and tick the Urdu "
-            "(urd) + Arabic (ara) script/data boxes during setup. Linux: "
-            "apt install tesseract-ocr tesseract-ocr-urd tesseract-ocr-ara. "
-            "Then re-run `python -m ocr engines`."
+            "(github.com/UB-Mannheim/tesseract/wiki) — the default "
+            "C:\\Program Files\\Tesseract-OCR location is auto-detected, no "
+            "PATH edit needed. Then add Urdu/Arabic models: download "
+            "urd.traineddata + ara.traineddata (tessdata_best) into the "
+            "tessdata folder, or set TESSDATA_PREFIX to a folder holding "
+            "eng+osd+urd+ara. Linux: apt install tesseract-ocr "
+            "tesseract-ocr-urd tesseract-ocr-ara."
         )
 
     def _run(
         self, args: list[str], timeout: int = SUBPROCESS_TIMEOUT
     ) -> subprocess.CompletedProcess[str]:
-        proc = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
+        exe = self.exe()
+        if exe is None:
+            raise RuntimeError(self.missing_hint())
+        proc = subprocess.run(
+            [exe, *args[1:]], capture_output=True, text=True, timeout=timeout
+        )
         if proc.returncode != 0:
             raise RuntimeError(
                 f"tesseract failed ({' '.join(args[:4])}…): {proc.stderr.strip()[-2000:]}"
@@ -127,19 +151,32 @@ class TesseractEngine:
 
     def ocr_page(self, png_bytes: bytes, langs: tuple[str, ...]) -> list[Word]:
         """TSV words for one rendered page image (fed via stdin pipe)."""
+        exe = self.exe()
+        if exe is None:
+            raise RuntimeError(self.missing_hint())
         full = subprocess.run(
-            ["tesseract", "stdin", "stdout", "-l", tesseract_langs(langs), "tsv"],
+            [exe, "stdin", "stdout", "-l", tesseract_langs(langs), "tsv"],
             input=png_bytes,
             capture_output=True,
             timeout=180,
         )
         if full.returncode != 0:
             raise RuntimeError(f"tesseract TSV failed: {full.stderr.decode()[-2000:]}")
-        return parse_tsv(full.stdout.decode(errors="replace"))
+        text = full.stdout.decode(errors="replace")
+        if not text.lstrip().startswith("level\t"):
+            raise RuntimeError(
+                "tesseract returned plain text instead of TSV — the tessdata "
+                "folder is missing tessconfigs/. Copy tessconfigs/ (and "
+                "configs/) from the Tesseract install into TESSDATA_PREFIX."
+            )
+        return parse_tsv(text)
 
     def page_text(self, png_bytes: bytes, langs: tuple[str, ...]) -> str:
+        exe = self.exe()
+        if exe is None:
+            raise RuntimeError(self.missing_hint())
         full = subprocess.run(
-            ["tesseract", "stdin", "stdout", "-l", tesseract_langs(langs)],
+            [exe, "stdin", "stdout", "-l", tesseract_langs(langs)],
             input=png_bytes,
             capture_output=True,
             timeout=180,

@@ -81,6 +81,16 @@ def render_page_png(src: str, pageno: int, dpi: int) -> bytes:
         return bytes(pix.tobytes("png"))
 
 
+def _pdf_unsupported(exc: Exception) -> bool:
+    """True when this Tesseract build cannot read PDFs itself.
+
+    (Some Windows builds lack Leptonica PDF support.) The page loop —
+    render PNG, pipe via stdin — always works instead.
+    """
+    text = str(exc).lower()
+    return "pdf reading is not supported" in text or "can't open pdf" in text
+
+
 def _looks_complete_pdf(path: str, pages: int) -> bool:
     try:
         with _open_pdf(path) as doc:
@@ -186,9 +196,18 @@ def process_file(
             manifest.outputs["pdf"] = os.path.abspath(dst_pdf)
         elif isinstance(engine, TesseractEngine):
             base, _ = os.path.splitext(dst_pdf)
-            manifest.outputs["pdf"] = os.path.abspath(
-                engine.run_searchable_pdf(src, base, langs)
-            )
+            try:
+                manifest.outputs["pdf"] = os.path.abspath(
+                    engine.run_searchable_pdf(src, base, langs)
+                )
+            except RuntimeError as exc:
+                if not _pdf_unsupported(exc):
+                    raise
+                say(f"[{stem}] this tesseract build can't read PDFs — page loop")
+                stats = searchable.build_searchable_pdf(src, dst_pdf, get_words(), dpi)
+                manifest.embedded_words = stats["embedded"]
+                manifest.failed_words = stats["failed"]
+                manifest.outputs["pdf"] = os.path.abspath(dst_pdf)
         else:
             stats = searchable.build_searchable_pdf(src, dst_pdf, get_words(), dpi)
             manifest.embedded_words = stats["embedded"]
@@ -203,7 +222,12 @@ def process_file(
             manifest.outputs["txt"] = os.path.abspath(dst_txt)
         else:
             if isinstance(engine, TesseractEngine) and words is None:
-                text = engine.run_text(src, langs)
+                try:
+                    text = engine.run_text(src, langs)
+                except RuntimeError as exc:
+                    if not _pdf_unsupported(exc):
+                        raise
+                    text = "\n\f\n".join(searchable.page_text(p) for p in get_words())
             else:
                 text = "\n\f\n".join(searchable.page_text(p) for p in get_words())
             with open(dst_txt, "w", encoding="utf-8") as fh:

@@ -27,12 +27,38 @@ python -m ocr run Books/Quran --dry-run
 
 1. **ocrmypdf** — whole-file searchable PDFs. Needs the `ocrmypdf` program
    (Windows: WSL/Docker; Linux: `pip install ocrmypdf` + tesseract).
-2. **tesseract** — searchable PDF, plain text, per-page words. Windows:
-   install the [UB Mannheim build](https://github.com/UB-Mannheim/tesseract/wiki)
-   and tick **urd + ara** data during setup. Linux:
-   `apt install tesseract-ocr tesseract-ocr-urd tesseract-ocr-ara`.
+2. **tesseract** — searchable PDF, plain text, per-page words. **Recommended
+   for our books** (see trial below).
 3. **easyocr** — Python library (`pip install easyocr`; first run downloads
-   models). Good Urdu/Arabic prints; needs patience on CPU.
+   models). Works with zero setup, but 3–5× slower and lower confidence
+   than Tesseract on Urdu print.
+
+### Windows setup that actually works (verified Sep 2026)
+
+1. Install the [UB Mannheim build](https://github.com/UB-Mannheim/tesseract/wiki)
+   (default location is auto-detected, no PATH edit needed).
+2. Download `urd.traineddata` + `ara.traineddata` from
+   `tesseract-ocr/tessdata_best` into a folder with `eng` + `osd`, e.g.
+   `C:\Users\<you>\Tesseract-OCR\tessdata\`.
+3. Copy `tessconfigs/`, `configs/` and `pdf.ttf` from the install's
+   `tessdata/` into that folder too — **without them Tesseract silently
+   returns plain text instead of TSV** and per-page OCR finds nothing.
+4. Persist it once: `setx TESSDATA_PREFIX "C:\Users\<you>\Tesseract-OCR\tessdata"`
+   (new shells pick it up; pass it inline for the current one).
+
+### Trial results, same pages (Tibyan p.50–51, Bukhari p.50–51, `--lang urd+ara`)
+
+| Engine | Tibyan chars / conf | Bukhari chars / conf | 2 pages time |
+|---|---|---|---|
+| easyocr (CPU) | 4,897 / 0.18 | 3,174 / 0.12 | ~5 min |
+| tesseract (best) | 4,497 / **0.56** | 2,803 / **0.40** | ~1 min |
+
+Tesseract wins on confidence (3×) and speed (4–5×). Both outputs are
+~75–80% Urdu-script text — real drafts, still needing proofreading.
+
+Full-set math (21,500+ pages at ~15–30 s/page on CPU): several days even
+with `--jobs 8`. Recommended path: one full volume overnight as the pilot
+(e.g. Bukhari vol 1 ≈ 1,000 pages), proofread it, then decide the rest.
 
 With none installed, every command fails with the exact install recipe —
 run `python -m ocr engines` to see yours. `python -m ocr langs` lists the
